@@ -4,7 +4,7 @@
 var mongoose = require('mongoose'),
   Auth = mongoose.model('Auth'),
   MACDTasks = mongoose.model('MACDTasks');
-  
+
 exports.login = function(req, res) {
 	console.log(req.body.username);
   Auth.find({username: req.body.username}, function(err, user) {
@@ -48,6 +48,22 @@ exports.readTask = function(req, res) {
   });
 };
 
+exports.readUserTaskList = function(req, res) {
+  MACDTasks.find({ 'createdBy': req.params.userId }, function(err, task) {
+    if (err)
+      res.send(err);
+    res.json(task);
+  });
+};
+
+exports.readUserTask = function(req, res) {
+  MACDTasks.findOne({'createdBy': req.params.userId, _id: req.params.taskId }, function(err, task) {
+    if (err)
+      res.send(err);
+    res.json(task);
+  });
+};
+
 
 exports.updateTask = function(req, res) {
   MACDTasks.findOneAndUpdate({_id: req.params.taskId}, req.body, {new: true}, function(err, task) {
@@ -69,4 +85,3 @@ exports.deleteTask = function(req, res) {
     res.json({ message: 'Task successfully deleted' });
   });
 };
-
